@@ -1,19 +1,22 @@
 package com.pmart5a.generator;
 
+import java.util.concurrent.atomic.AtomicLong;
+
 public class GeneratorId {
-    private long nextId = 1;
-    private static GeneratorId generatorId = null;
+    private final AtomicLong nextId = new AtomicLong(1);
 
-    private GeneratorId() {}
-
-    public static GeneratorId getGeneratorId() {
-        if (generatorId == null) {
-            generatorId = new GeneratorId();
-        }
-        return generatorId;
+    private GeneratorId() {
     }
 
-    public synchronized Long getId() {
-        return nextId++;
+    private static class GeneratorIdHolder {
+        public static final GeneratorId generatorId = new GeneratorId();
+    }
+
+    public static GeneratorId getGeneratorId() {
+        return GeneratorIdHolder.generatorId;
+    }
+
+    public Long getId() {
+        return nextId.getAndIncrement();
     }
 }
